@@ -2,9 +2,13 @@
 
 Theoretical price paths for tech, ETFs, funds, and crypto under stacked macro, geo, and sector events.
 
+**Repo:** [github.com/KnockSide/meridian-scenario-desk](https://github.com/KnockSide/meridian-scenario-desk)
+
 ## Run locally
 
 ```bash
+git clone https://github.com/KnockSide/meridian-scenario-desk.git
+cd meridian-scenario-desk
 npm install
 npm run dev
 ```

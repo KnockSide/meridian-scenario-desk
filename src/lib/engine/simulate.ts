@@ -269,6 +269,81 @@ function interactionDelta(id: string, asset: AssetId, amp: number, current: numb
     case "ban-plus-tether":
       if (isCrypto(asset) || asset === "MSTR") return -0.08 * amp;
       return 0;
+    case "robots-fill-gap":
+      if (asset === "BOTZ" || asset === "AMZN") return 0.1 * amp;
+      if (asset === "NVDA" || asset === "TSLA") return 0.05 * amp;
+      if (asset === "WMT") return -0.04 * amp;
+      return 0;
+    case "robots-need-oxides":
+      if (asset === "TSLA" || asset === "BOTZ") return -0.5 * Math.max(0, current) * amp;
+      if (asset === "AAPL" || asset === "AMZN") return -0.06 * amp;
+      return 0;
+    case "iot-plus-cyber":
+      if (asset === "CRWD") return 0.12 * amp;
+      if (isHardware(asset) || asset === "BOTZ") return -0.06 * amp;
+      return 0;
+    case "auto-vs-ransom":
+      if (asset === "AMZN" || asset === "BOTZ") return -0.5 * Math.max(0, current) * amp;
+      return 0;
+    case "oxides-vs-fusion":
+      if (asset === "TSLA") return -0.45 * Math.max(0, current) * amp;
+      if (asset === "CCJ") return 0.06 * amp;
+      return 0;
+    case "ubi-plus-print":
+      if (asset === "WMT" || asset === "AMZN" || asset === "IGLN" || asset === "BTC") return 0.08 * amp;
+      if (asset === "DOGE") return 0.06 * amp;
+      return 0;
+    case "ubi-into-fiat":
+      if (asset === "IGLN" || asset === "BTC" || asset === "WMT") return 0.08 * amp;
+      if (asset === "TLT") return -0.06 * amp;
+      return 0;
+    case "ubi-vs-crops":
+      if (asset === "DBA") return 0.1 * amp;
+      if (isTech(asset)) return -0.06 * amp;
+      return 0;
+    case "cbdc-vs-ban":
+      if (asset === "XMR" || asset === "BTC" || asset === "MSTR") return -0.55 * current * amp;
+      return 0;
+    case "g7-plus-dedollar":
+      if (asset === "IGLN") return 0.1 * amp;
+      if (asset === "TLT") return -0.12 * amp;
+      if (asset === "SPX" || asset === "URTH") return -0.06 * amp;
+      return 0;
+    case "g7-plus-fiat":
+      if (asset === "IGLN") return 0.1 * amp;
+      if (asset === "SPX" || asset === "QQQ") return -0.06 * amp;
+      return 0;
+    case "life-vs-labor":
+      if (asset === "LLY" || asset === "NVO") return 0.05 * amp;
+      if (asset === "WMT") return -0.04 * amp;
+      return 0;
+    case "crops-plus-fiat":
+      if (asset === "DBA" || asset === "IGLN") return 0.08 * amp;
+      if (isTech(asset)) return -0.04 * amp;
+      return 0;
+    case "labor-plus-ai":
+      if (asset === "NVDA" || asset === "BOTZ" || asset === "AMZN") return 0.08 * amp;
+      if (asset === "WMT") return -0.04 * amp;
+      return 0;
+    case "orbit-plus-cyber":
+      if (asset === "LMT") return 0.08 * amp;
+      if (isTech(asset)) return -0.05 * amp;
+      return 0;
+    case "rocks-vs-gold":
+      if (asset === "IGLN") return -0.55 * current * amp;
+      if (asset === "BTC" || asset === "MSTR") return 0.1 * amp;
+      return 0;
+    case "rocks-vs-dedollar":
+      if (asset === "IGLN") return -0.5 * current * amp;
+      if (asset === "BTC") return 0.08 * amp;
+      return 0;
+    case "flash-plus-clamp":
+      if (asset === "NVDA" || asset === "QQQ" || asset === "MSFT") return -0.08 * amp;
+      return 0;
+    case "flash-plus-cyber":
+      if (asset === "IGLN" || asset === "TLT") return 0.06 * amp;
+      if (isTech(asset) || isCrypto(asset)) return -0.06 * amp;
+      return 0;
     default:
       return 0;
   }

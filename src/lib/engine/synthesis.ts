@@ -8,17 +8,26 @@ const RANK: AssetId[] = [
   "TSLA",
   "AAPL",
   "MSFT",
+  "AMZN",
+  "CRWD",
   "MSTR",
   "RHM",
+  "LMT",
+  "LLY",
+  "NVO",
+  "WMT",
   "QQQ",
   "SMH",
   "ARKK",
+  "BOTZ",
   "IGLN",
+  "DBA",
   "VNQ",
   "TLT",
   "BTC",
   "ETH",
   "SOL",
+  "XMR",
   "TAO",
   "DOGE",
   "SPX",
@@ -126,6 +135,42 @@ export function localSynthesis(input: MixInput, result: EngineResult): string {
   } else if (ids.includes("peace")) {
     parts.push(
       `A settlement takes the fear premium out of gold and defense. World equities recover; Rheinmetall gives the war bid back.`,
+    );
+  } else if (ids.includes("hyper_auto") && ids.includes("labor_gap")) {
+    parts.push(
+      `The shop floor is empty and the warehouse no longer needs hands. Amazon and BOTZ are the substitute; Walmart is the wage bill.`,
+    );
+  } else if (ids.includes("rare_earth") && ids.includes("green_energy")) {
+    parts.push(
+      `A battery leap still needs oxides the embargo will not ship. Tesla’s green bid is bound; Cameco is not the magnet, but it is the domestic-resource bid.`,
+    );
+  } else if (ids.includes("cbdc")) {
+    parts.push(
+      `Cash dies on a timetable. Monero is the exit; XRP, closer to the rail, does not travel with it.`,
+    );
+  } else if (ids.includes("debt_default")) {
+    parts.push(
+      `A G7 miss is not a multiple story. The S&P and MSCI World gap; gold is the bid that still clears.`,
+    );
+  } else if (ids.includes("asteroid")) {
+    parts.push(
+      `The metal is no longer scarce. Gold gives up the store-of-value seat; Bitcoin is what remains absolutely finite.`,
+    );
+  } else if (ids.includes("algo_war")) {
+    parts.push(
+      `The print is a close, not a valuation. Treat the median as a halt and the cone as the reopen.`,
+    );
+  } else if (ids.includes("kessler")) {
+    parts.push(
+      `GPS is an input to the tape. Lockheed is the rebuild; anything that prices off a satellite clock is marked down.`,
+    );
+  } else if (ids.includes("longevity")) {
+    parts.push(
+      `The actuarial book is the short. Lilly and Novo re-rate; duration that assumed a shorter life is offered.`,
+    );
+  } else if (ids.includes("crop_fail")) {
+    parts.push(
+      `Calories clear first. DBA is the harvest; discretionary tech is what does not get bought.`,
     );
   }
 

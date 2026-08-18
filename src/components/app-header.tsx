@@ -73,20 +73,21 @@ export function AppHeader() {
 
 function DownloadSource() {
   async function onClick() {
-    const res = await fetch("/meridian-scenario-desk.zip");
-    if (!res.ok) {
-      window.open("/meridian-scenario-desk.zip", "_blank", "noopener");
-      return;
+    try {
+      const res = await fetch("/meridian-scenario-desk.zip");
+      if (!res.ok) throw new Error("missing");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "meridian-scenario-desk.zip";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1500);
+    } catch {
+      window.open("https://github.com/KnockSide/meridian-scenario-desk/archive/refs/heads/main.zip", "_blank", "noopener");
     }
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "meridian-scenario-desk.zip";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 1500);
   }
 
   return (

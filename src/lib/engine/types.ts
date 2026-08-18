@@ -8,6 +8,11 @@ export type AssetId =
   | "LLY"
   | "MSTR"
   | "CCJ"
+  | "AMZN"
+  | "CRWD"
+  | "WMT"
+  | "NVO"
+  | "LMT"
   | "SPX"
   | "URTH"
   | "QQQ"
@@ -17,6 +22,7 @@ export type AssetId =
   | "BOTZ"
   | "IGLN"
   | "VNQ"
+  | "DBA"
   | "PIMIX"
   | "FVST"
   | "BTC"
@@ -63,7 +69,19 @@ export type ScenarioId =
   | "ai_reg"
   | "solar_flare"
   | "dedollar"
-  | "tether";
+  | "tether"
+  | "hyper_auto"
+  | "iot_ransom"
+  | "rare_earth"
+  | "ubi"
+  | "cbdc"
+  | "debt_default"
+  | "longevity"
+  | "crop_fail"
+  | "labor_gap"
+  | "kessler"
+  | "asteroid"
+  | "algo_war";
 
 export type ShockMap = Record<AssetId, number>;
 
