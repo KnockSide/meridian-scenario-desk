@@ -13,6 +13,57 @@ export type AssetId =
   | "WMT"
   | "NVO"
   | "LMT"
+  | "PLTR"
+  | "GOOGL"
+  | "META"
+  | "ORCL"
+  | "SNOW"
+  | "NOW"
+  | "NET"
+  | "AVGO"
+  | "AMD"
+  | "TSM"
+  | "ARM"
+  | "MU"
+  | "AMAT"
+  | "LRCX"
+  | "SNPS"
+  | "MRVL"
+  | "ANET"
+  | "KLAC"
+  | "PANW"
+  | "FTNT"
+  | "ZS"
+  | "RTX"
+  | "NOC"
+  | "BA"
+  | "GD"
+  | "AVAV"
+  | "RKLB"
+  | "CEG"
+  | "VST"
+  | "OKLO"
+  | "SMR"
+  | "FSLR"
+  | "BE"
+  | "MP"
+  | "ALB"
+  | "ISRG"
+  | "VRTX"
+  | "TMO"
+  | "SIE"
+  | "ROK"
+  | "ABB"
+  | "DE"
+  | "CAT"
+  | "HON"
+  | "EMR"
+  | "IONQ"
+  | "RGTI"
+  | "COIN"
+  | "HOOD"
+  | "UBER"
+  | "RIVN"
   | "SPX"
   | "URTH"
   | "QQQ"
@@ -37,6 +88,20 @@ export type AssetId =
   | "DOGE";
 
 export type AssetClass = "equity" | "etf" | "fund" | "crypto";
+export type EquityTheme =
+  | "ai"
+  | "semi"
+  | "cyber"
+  | "defense"
+  | "energy"
+  | "bio"
+  | "industrial"
+  | "space"
+  | "materials"
+  | "quantum"
+  | "rails"
+  | "mobility"
+  | "consumer";
 export type ScenarioCategory = "macro" | "geo" | "sector";
 export type ScenarioTone = "bull" | "bear" | "mixed";
 export type ShockProfile =
@@ -90,6 +155,7 @@ export type Asset = {
   ticker: string;
   name: string;
   class: AssetClass;
+  theme?: EquityTheme;
   last: number;
   kind: "usd" | "index" | "crypto";
   mu: number;

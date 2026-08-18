@@ -6,25 +6,26 @@ import type {
   ScenarioId,
   ShockMap,
 } from "./types";
+import { applyBookShocks, BOOK_ASSETS } from "./book";
 
 export const AS_OF = "2026-08-18";
 export const AS_OF_LABEL = "18 Aug 2026";
 
 export const ASSETS: Asset[] = [
-  { id: "AAPL", ticker: "AAPL", name: "Apple", class: "equity", last: 306.7, kind: "usd", mu: 0.11, sigma: 0.24, colorVar: "var(--color-aapl)" },
-  { id: "MSFT", ticker: "MSFT", name: "Microsoft", class: "equity", last: 478.16, kind: "usd", mu: 0.13, sigma: 0.23, colorVar: "var(--color-msft)" },
-  { id: "NVDA", ticker: "NVDA", name: "NVIDIA", class: "equity", last: 220.07, kind: "usd", mu: 0.22, sigma: 0.42, colorVar: "var(--color-nvda)" },
-  { id: "TSLA", ticker: "TSLA", name: "Tesla", class: "equity", last: 332.59, kind: "usd", mu: 0.14, sigma: 0.52, colorVar: "var(--color-tsla)" },
-  { id: "ASML", ticker: "ASML", name: "ASML", class: "equity", last: 1788, kind: "usd", mu: 0.16, sigma: 0.38, colorVar: "var(--color-asml)" },
-  { id: "RHM", ticker: "RHM", name: "Rheinmetall", class: "equity", last: 1214, kind: "usd", mu: 0.1, sigma: 0.44, colorVar: "var(--color-rhm)" },
-  { id: "LLY", ticker: "LLY", name: "Eli Lilly", class: "equity", last: 1215, kind: "usd", mu: 0.12, sigma: 0.32, colorVar: "var(--color-lly)" },
-  { id: "MSTR", ticker: "MSTR", name: "Strategy", class: "equity", last: 94, kind: "usd", mu: 0.2, sigma: 0.82, colorVar: "var(--color-mstr)" },
-  { id: "CCJ", ticker: "CCJ", name: "Cameco", class: "equity", last: 95.5, kind: "usd", mu: 0.13, sigma: 0.48, colorVar: "var(--color-ccj)" },
-  { id: "AMZN", ticker: "AMZN", name: "Amazon", class: "equity", last: 261.31, kind: "usd", mu: 0.13, sigma: 0.28, colorVar: "var(--color-amzn)" },
-  { id: "CRWD", ticker: "CRWD", name: "CrowdStrike", class: "equity", last: 212.96, kind: "usd", mu: 0.16, sigma: 0.46, colorVar: "var(--color-crwd)" },
-  { id: "WMT", ticker: "WMT", name: "Walmart", class: "equity", last: 115.58, kind: "usd", mu: 0.08, sigma: 0.18, colorVar: "var(--color-wmt)" },
-  { id: "NVO", ticker: "NVO", name: "Novo Nordisk", class: "equity", last: 98.4, kind: "usd", mu: 0.11, sigma: 0.34, colorVar: "var(--color-nvo)" },
-  { id: "LMT", ticker: "LMT", name: "Lockheed Martin", class: "equity", last: 478, kind: "usd", mu: 0.08, sigma: 0.22, colorVar: "var(--color-lmt)" },
+  { id: "AAPL", ticker: "AAPL", name: "Apple", class: "equity", theme: "ai", last: 306.7, kind: "usd", mu: 0.11, sigma: 0.24, colorVar: "var(--color-aapl)" },
+  { id: "MSFT", ticker: "MSFT", name: "Microsoft", class: "equity", theme: "ai", last: 478.16, kind: "usd", mu: 0.13, sigma: 0.23, colorVar: "var(--color-msft)" },
+  { id: "NVDA", ticker: "NVDA", name: "NVIDIA", class: "equity", theme: "semi", last: 220.07, kind: "usd", mu: 0.22, sigma: 0.42, colorVar: "var(--color-nvda)" },
+  { id: "TSLA", ticker: "TSLA", name: "Tesla", class: "equity", theme: "mobility", last: 332.59, kind: "usd", mu: 0.14, sigma: 0.52, colorVar: "var(--color-tsla)" },
+  { id: "ASML", ticker: "ASML", name: "ASML", class: "equity", theme: "semi", last: 1788, kind: "usd", mu: 0.16, sigma: 0.38, colorVar: "var(--color-asml)" },
+  { id: "RHM", ticker: "RHM", name: "Rheinmetall", class: "equity", theme: "defense", last: 1214, kind: "usd", mu: 0.1, sigma: 0.44, colorVar: "var(--color-rhm)" },
+  { id: "LLY", ticker: "LLY", name: "Eli Lilly", class: "equity", theme: "bio", last: 1215, kind: "usd", mu: 0.12, sigma: 0.32, colorVar: "var(--color-lly)" },
+  { id: "MSTR", ticker: "MSTR", name: "Strategy", class: "equity", theme: "rails", last: 94, kind: "usd", mu: 0.2, sigma: 0.82, colorVar: "var(--color-mstr)" },
+  { id: "CCJ", ticker: "CCJ", name: "Cameco", class: "equity", theme: "energy", last: 95.5, kind: "usd", mu: 0.13, sigma: 0.48, colorVar: "var(--color-ccj)" },
+  { id: "AMZN", ticker: "AMZN", name: "Amazon", class: "equity", theme: "ai", last: 261.31, kind: "usd", mu: 0.13, sigma: 0.28, colorVar: "var(--color-amzn)" },
+  { id: "CRWD", ticker: "CRWD", name: "CrowdStrike", class: "equity", theme: "cyber", last: 212.96, kind: "usd", mu: 0.16, sigma: 0.46, colorVar: "var(--color-crwd)" },
+  { id: "WMT", ticker: "WMT", name: "Walmart", class: "equity", theme: "consumer", last: 115.58, kind: "usd", mu: 0.08, sigma: 0.18, colorVar: "var(--color-wmt)" },
+  { id: "NVO", ticker: "NVO", name: "Novo Nordisk", class: "equity", theme: "bio", last: 98.4, kind: "usd", mu: 0.11, sigma: 0.34, colorVar: "var(--color-nvo)" },
+  { id: "LMT", ticker: "LMT", name: "Lockheed Martin", class: "equity", theme: "defense", last: 478, kind: "usd", mu: 0.08, sigma: 0.22, colorVar: "var(--color-lmt)" },
   { id: "SPX", ticker: "SPX", name: "S&P 500", class: "etf", last: 7730, kind: "index", mu: 0.08, sigma: 0.16, colorVar: "var(--color-spx)" },
   { id: "URTH", ticker: "URTH", name: "MSCI World", class: "etf", last: 208.4, kind: "usd", mu: 0.07, sigma: 0.15, colorVar: "var(--color-urth)" },
   { id: "QQQ", ticker: "QQQ", name: "Nasdaq 100", class: "etf", last: 628.2, kind: "usd", mu: 0.12, sigma: 0.22, colorVar: "var(--color-qqq)" },
@@ -47,6 +48,7 @@ export const ASSETS: Asset[] = [
   { id: "XMR", ticker: "XMR", name: "Monero", class: "crypto", last: 415, kind: "crypto", mu: 0.08, sigma: 0.7, colorVar: "var(--color-xmr)" },
   { id: "UNI", ticker: "UNI", name: "Uniswap", class: "crypto", last: 3.28, kind: "crypto", mu: 0.12, sigma: 0.8, colorVar: "var(--color-uni)" },
   { id: "DOGE", ticker: "DOGE", name: "Dogecoin", class: "crypto", last: 0.0701, kind: "crypto", mu: 0.05, sigma: 0.95, colorVar: "var(--color-doge)" },
+  ...BOOK_ASSETS,
 ];
 
 export const ASSET_BY_ID: Record<AssetId, Asset> = Object.fromEntries(
@@ -55,10 +57,13 @@ export const ASSET_BY_ID: Record<AssetId, Asset> = Object.fromEntries(
 
 export const ASSET_IDS = ASSETS.map((a) => a.id);
 
-export const TECH: AssetId[] = ["AAPL", "MSFT", "NVDA", "TSLA", "ASML", "AMZN", "CRWD", "QQQ", "SMH", "ARKK", "BOTZ"];
+export const TECH: AssetId[] = [
+  "AAPL", "MSFT", "NVDA", "TSLA", "ASML", "AMZN", "CRWD", "PLTR", "GOOGL", "META", "ORCL",
+  "AVGO", "AMD", "TSM", "ARM", "QQQ", "SMH", "ARKK", "BOTZ",
+];
 export const CRYPTO: AssetId[] = ["BTC", "ETH", "XRP", "SOL", "LINK", "RENDER", "TAO", "XMR", "UNI", "DOGE"];
-export const HARDWARE: AssetId[] = ["NVDA", "ASML", "SMH", "AAPL", "TSLA"];
-export const SEMI: AssetId[] = ["NVDA", "ASML", "SMH"];
+export const HARDWARE: AssetId[] = ["NVDA", "ASML", "SMH", "AAPL", "TSLA", "TSM", "AMAT", "LRCX", "AVGO", "AMD", "ARM"];
+export const SEMI: AssetId[] = ["NVDA", "ASML", "SMH", "AVGO", "AMD", "TSM", "ARM", "MU", "AMAT", "LRCX", "MRVL", "KLAC"];
 export const GOLD: AssetId[] = ["IGLN"];
 export const DURATION: AssetId[] = ["TLT", "PIMIX"];
 export const AI_DECENTRAL: AssetId[] = ["TAO", "RENDER"];
@@ -696,6 +701,7 @@ for (const s of SCENARIOS) {
   const extra = LEGACY_EXTRAS[s.id];
   if (extra) Object.assign(s.shocks, extra);
 }
+applyBookShocks(SCENARIOS);
 
 export const SCENARIO_BY_ID: Record<ScenarioId, Scenario> = Object.fromEntries(
   SCENARIOS.map((s) => [s.id, s]),
@@ -1085,7 +1091,7 @@ export const DEFAULT_WEIGHTS: Record<ScenarioId, number> = Object.fromEntries(
   SCENARIO_IDS.map((id) => [id, 100]),
 ) as Record<ScenarioId, number>;
 
-export const DEFAULT_VISIBLE: AssetId[] = ["AAPL", "MSFT", "NVDA", "TSLA", "BTC"];
+export const DEFAULT_VISIBLE: AssetId[] = ["AAPL", "MSFT", "NVDA", "PLTR", "RHM", "BTC"];
 
 export const CLASS_LABEL: Record<Asset["class"], string> = {
   equity: "Equity",

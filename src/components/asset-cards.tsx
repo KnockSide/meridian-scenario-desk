@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { ASSETS, ASSET_BY_ID, CLASS_LABEL } from "@/lib/engine/data";
+import { THEME_LABEL } from "@/lib/engine/book";
 import { useDesk } from "@/lib/store";
-import type { AssetClass, AssetId } from "@/lib/engine/types";
+import type { AssetClass, AssetId, EquityTheme } from "@/lib/engine/types";
 import { cn, formatPct, formatPrice } from "@/lib/utils";
 
 const FILTERS: { id: "all" | AssetClass; label: string }[] = [
@@ -14,26 +15,55 @@ const FILTERS: { id: "all" | AssetClass; label: string }[] = [
   { id: "crypto", label: "Crypto" },
 ];
 
+const THEMES: EquityTheme[] = [
+  "ai",
+  "semi",
+  "cyber",
+  "defense",
+  "energy",
+  "bio",
+  "industrial",
+  "space",
+  "materials",
+  "quantum",
+  "rails",
+  "mobility",
+  "consumer",
+];
+
 export function AssetCards() {
   const { result, visible, focused, toggleVisible, setFocused } = useDesk();
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]["id"]>("all");
-  const rows = useMemo(
-    () => (filter === "all" ? ASSETS : ASSETS.filter((a) => a.class === filter)),
-    [filter],
-  );
+  const [filter, setFilter] = useState<(typeof FILTERS)[number]["id"]>("equity");
+  const [theme, setTheme] = useState<EquityTheme | "all">("all");
+  const [q, setQ] = useState("");
+
+  const rows = useMemo(() => {
+    const needle = q.trim().toLowerCase();
+    return ASSETS.filter((a) => {
+      if (filter !== "all" && a.class !== filter) return false;
+      if (theme !== "all" && a.theme !== theme) return false;
+      if (!needle) return true;
+      return a.ticker.toLowerCase().includes(needle) || a.name.toLowerCase().includes(needle);
+    });
+  }, [filter, theme, q]);
+
+  const showThemes = filter === "all" || filter === "equity";
 
   return (
     <section className="min-w-0">
-      <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2 px-0.5">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2 px-0.5">
         <p className="text-2xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-          Marks · theoretical
+          Marks · theoretical · {rows.length}
         </p>
-        <div className="flex items-center gap-1">
+        <div className="flex min-w-0 flex-wrap items-center gap-1">
           {FILTERS.map((f) => (
             <button
               key={f.id}
               type="button"
-              onClick={() => setFilter(f.id)}
+              onClick={() => {
+                setFilter(f.id);
+                if (f.id !== "all" && f.id !== "equity") setTheme("all");
+              }}
               className={cn(
                 "rounded-sm px-2 py-1 text-2xs uppercase tracking-wider",
                 filter === f.id ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground",
@@ -42,12 +72,46 @@ export function AssetCards() {
               {f.label}
             </button>
           ))}
-          <span className="ml-1 hidden text-2xs text-muted-foreground sm:inline">Tap to solo</span>
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Find ticker"
+            aria-label="Find ticker"
+            className="ml-1 h-7 w-28 rounded-sm border border-border bg-transparent px-2 font-mono text-2xs text-foreground placeholder:text-muted-foreground sm:w-36"
+          />
         </div>
       </div>
+      {showThemes ? (
+        <div className="mb-3 flex gap-1 overflow-x-auto pb-1">
+          <button
+            type="button"
+            onClick={() => setTheme("all")}
+            className={cn(
+              "shrink-0 rounded-sm px-2 py-1 text-2xs uppercase tracking-wider",
+              theme === "all" ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            Book
+          </button>
+          {THEMES.map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTheme(t)}
+              className={cn(
+                "shrink-0 rounded-sm px-2 py-1 text-2xs uppercase tracking-wider",
+                theme === t ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {THEME_LABEL[t]}
+            </button>
+          ))}
+        </div>
+      ) : null}
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
         {rows.map((asset) => {
           const row = result.assets[asset.id];
+          if (!row) return null;
           const on = visible.includes(asset.id);
           const isFocus = focused === asset.id;
           const up = row.pct >= 0;
@@ -108,9 +172,10 @@ export function AssetCards() {
 }
 
 function Spark({ id }: { id: AssetId }) {
-  const series = useDesk((s) => s.result.assets[id].series);
+  const series = useDesk((s) => s.result.assets[id]?.series);
   const last = ASSET_BY_ID[id].last;
   const color = ASSET_BY_ID[id].colorVar;
+  if (!series) return null;
   const pts = series.filter((p) => p.scenario != null).slice(-36);
   if (pts.length < 2) return null;
   const vals = pts.map((p) => p.scenario ?? last);
