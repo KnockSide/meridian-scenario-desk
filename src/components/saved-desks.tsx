@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { authEnabled } from "@/lib/auth/client";
 import { deleteDesk, listDesks, saveDesk, type SavedDesk } from "@/lib/server/saved-desks";
 import { useDesk } from "@/lib/store";
 
@@ -24,6 +25,8 @@ export function SavedDesks() {
       .then(setRows)
       .catch(() => setRows([]));
   }, [open, user]);
+
+  if (!authEnabled || user?.isDevFallback) return null;
 
   if (isPending) return <div className="hidden h-8 w-16 animate-pulse rounded-sm bg-secondary sm:block" />;
 

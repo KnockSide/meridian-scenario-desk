@@ -74,6 +74,7 @@ export function AppHeader() {
 
 function AuthSlot() {
   const { user, isPending } = useCurrentUserState();
+  if (user?.isDevFallback) return null;
   if (isPending) {
     return <div className="size-8 shrink-0 animate-pulse rounded-full bg-secondary" />;
   }

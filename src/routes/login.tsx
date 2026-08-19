@@ -36,7 +36,9 @@ function Login() {
               </Button>
             ))
           ) : (
-            <p className="text-sm text-muted-foreground">Sign-in is disabled.</p>
+            <p className="text-sm text-muted-foreground">
+              Accounts are not enabled on this deployment. The desk is open without sign-in.
+            </p>
           )}
         </div>
         <p className="mt-6 text-center text-xs text-muted-foreground">

@@ -24,6 +24,17 @@ Open the URL Vite prints (default `http://localhost:8080`).
 
 Marks are delayed quotes (Yahoo by default; set `FINNHUB_API_KEY` to prefer Finnhub). Paths are a house shock model — not a forecast, offer, or advice.
 
+## Public site (Vercel)
+
+The build target is Vercel (`nitro` preset). From the repo root:
+
+```bash
+npx vercel login
+npx vercel --prod -b VITE_AUTH_ENABLED=false -e VITE_AUTH_ENABLED=false
+```
+
+Set `VITE_AUTH_ENABLED=false` so Grok-preview OAuth is not shown. The desk, live marks, and legal pages stay public. Optional: `FINNHUB_API_KEY` if Yahoo is blocked from Vercel IPs.
+
 ## Build
 
 ```bash
