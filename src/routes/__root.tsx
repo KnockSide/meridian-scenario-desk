@@ -6,6 +6,8 @@ import { Toaster } from "@/components/toaster";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "Meridian";
+const APP_DESC =
+  "Stack macro, geo, and sector events. Theoretical paths for tech, ETFs, funds, and crypto, rebased to delayed market marks.";
 const host = import.meta.env.VITE_PUBLIC_HOSTNAME;
 const ogImage = host ? `https://${host}/og.jpg` : undefined;
 
@@ -14,8 +16,10 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: APP_NAME },
-      { name: "description", content: "Stack macro events and project theoretical paths for tech, ETFs, and crypto." },
+      { title: `${APP_NAME} — Scenario desk` },
+      { name: "description", content: APP_DESC },
+      { property: "og:title", content: `${APP_NAME} — Scenario desk` },
+      { property: "og:description", content: APP_DESC },
       { name: "apple-mobile-web-app-title", content: APP_NAME },
       { name: "theme-color", content: "#09090b" },
       { name: "twitter:card", content: "summary_large_image" },

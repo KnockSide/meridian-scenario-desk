@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ASSETS, ASSET_BY_ID, CLASS_LABEL } from "@/lib/engine/data";
+import { symbolFor } from "@/lib/market/symbols";
 import { THEME_LABEL } from "@/lib/engine/book";
 import { useDesk } from "@/lib/store";
 import type { AssetClass, AssetId, EquityTheme } from "@/lib/engine/types";
@@ -32,7 +33,7 @@ const THEMES: EquityTheme[] = [
 ];
 
 export function AssetCards() {
-  const { result, visible, focused, toggleVisible, setFocused } = useDesk();
+  const { result, visible, focused, toggleVisible, setFocused, currencies } = useDesk();
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["id"]>("equity");
   const [theme, setTheme] = useState<EquityTheme | "all">("all");
   const [q, setQ] = useState("");
@@ -53,7 +54,7 @@ export function AssetCards() {
     <section className="min-w-0">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2 px-0.5">
         <p className="text-2xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-          Marks · theoretical · {rows.length}
+          Marks · delayed · {rows.length}
         </p>
         <div className="flex min-w-0 flex-wrap items-center gap-1">
           {FILTERS.map((f) => (
@@ -156,10 +157,11 @@ export function AssetCards() {
                 onClick={() => setFocused(isFocus ? null : asset.id)}
               >
                 <p className="truncate font-mono text-sm tabular text-foreground">
-                  {formatPrice(row.projected, asset.kind)}
+                  {formatPrice(row.projected, asset.kind, currencies[asset.id] ?? symbolFor(asset.id).currency)}
                 </p>
                 <p className="truncate font-mono text-2xs tabular text-muted-foreground">
-                  last {formatPrice(row.last, asset.kind)} · {CLASS_LABEL[asset.class]}
+                  last {formatPrice(row.last, asset.kind, currencies[asset.id] ?? symbolFor(asset.id).currency)} ·{" "}
+                  {CLASS_LABEL[asset.class]}
                 </p>
                 <Spark id={asset.id} />
               </button>
@@ -173,7 +175,7 @@ export function AssetCards() {
 
 function Spark({ id }: { id: AssetId }) {
   const series = useDesk((s) => s.result.assets[id]?.series);
-  const last = ASSET_BY_ID[id].last;
+  const last = useDesk((s) => s.result.assets[id]?.last) ?? ASSET_BY_ID[id].last;
   const color = ASSET_BY_ID[id].colorVar;
   if (!series) return null;
   const pts = series.filter((p) => p.scenario != null).slice(-36);

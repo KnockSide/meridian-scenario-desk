@@ -1,12 +1,13 @@
 "use client";
 
 import { Link } from "@tanstack/react-router";
-import { Download, SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ScenarioEngine } from "@/components/scenario-engine";
 import { SavedDesks } from "@/components/saved-desks";
 import { MeridianMark } from "@/components/meridian-mark";
+import { LiveStatus } from "@/components/live-status";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { signOut } from "@/lib/auth/client";
 import { useDesk } from "@/lib/store";
@@ -62,39 +63,12 @@ export function AppHeader() {
             </SheetContent>
           </Sheet>
 
-          <DownloadSource />
+          <LiveStatus />
           <SavedDesks />
           <AuthSlot />
         </div>
       </div>
     </header>
-  );
-}
-
-function DownloadSource() {
-  async function onClick() {
-    try {
-      const res = await fetch("/meridian-scenario-desk.zip");
-      if (!res.ok) throw new Error("missing");
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "meridian-scenario-desk.zip";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 1500);
-    } catch {
-      window.open("https://github.com/KnockSide/meridian-scenario-desk/archive/refs/heads/main.zip", "_blank", "noopener");
-    }
-  }
-
-  return (
-    <Button variant="outline" size="sm" type="button" onClick={() => void onClick()}>
-      <Download />
-      <span className="sr-only sm:not-sr-only">Source</span>
-    </Button>
   );
 }
 

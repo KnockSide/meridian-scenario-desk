@@ -12,10 +12,11 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { ASSET_BY_ID, AS_OF, AS_OF_LABEL } from "@/lib/engine/data";
+import { ASSET_BY_ID } from "@/lib/engine/data";
+import { symbolFor } from "@/lib/market/symbols";
 import { useDesk } from "@/lib/store";
 import type { AssetId } from "@/lib/engine/types";
-import { formatPrice } from "@/lib/utils";
+import { formatAsOfLabel, formatPrice } from "@/lib/utils";
 
 type Row = {
   t: number;
@@ -66,7 +67,7 @@ function n(v?: number) {
 }
 
 export function PriceChart() {
-  const { result, focused, visible } = useDesk();
+  const { result, focused, visible, currencies } = useDesk();
   const solo = focused && result.assets[focused] ? focused : visible.length === 1 ? visible[0] : null;
   const [indexMode, setIndexMode] = useState(false);
   const useIndex = indexMode || !solo;
@@ -125,16 +126,19 @@ export function PriceChart() {
     };
   }, [result, solo, visible, useIndex]);
 
-  const impactLabel = data.find((d) => d.iso === AS_OF)?.iso ?? AS_OF;
-  const last = solo ? ASSET_BY_ID[solo].last : 100;
+  const nowIso = result.asOf;
+  const impactLabel = data.find((d) => d.iso === nowIso)?.iso ?? nowIso;
+  const last = solo ? (result.assets[solo]?.last ?? ASSET_BY_ID[solo].last) : 100;
   const chartKey = `${solo ?? "book"}-${useIndex ? "i" : "p"}-${visible.join(",")}`;
+  const ccy = solo ? (currencies[solo] ?? symbolFor(solo).currency) : undefined;
 
   return (
     <section className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-3 py-3 sm:px-4">
         <div className="min-w-0">
           <p className="text-2xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-            Path · impact {AS_OF_LABEL}
+            Path · marks {formatAsOfLabel(result.asOf)}
+            {ccy && ccy !== "USD" ? ` · ${ccy}` : ""}
           </p>
           <h2 className="truncate font-display text-xl tracking-tight">
             {solo ? `${ASSET_BY_ID[solo].name} · ${ASSET_BY_ID[solo].ticker}` : "Indexed book"}
@@ -186,14 +190,14 @@ export function PriceChart() {
               tickLine={false}
               tickFormatter={(v: number) => formatTick(v, useIndex || !solo, last)}
             />
-            <ReTooltip content={<ChartTip solo={solo} indexed={useIndex || !solo} />} />
+            <ReTooltip content={<ChartTip solo={solo} indexed={useIndex || !solo} currency={ccy} />} />
             <ReferenceLine
               x={impactLabel}
               stroke="var(--color-accent)"
               strokeDasharray="3 4"
               strokeOpacity={0.55}
               label={{
-                value: "Impact",
+                value: "Now",
                 fill: "var(--color-muted-foreground)",
                 fontSize: 10,
                 position: "insideTopRight",
@@ -311,12 +315,14 @@ function ChartTip({
   label,
   solo,
   indexed,
+  currency,
 }: {
   active?: boolean;
   payload?: { dataKey?: string | number; value?: number; color?: string }[];
   label?: string;
   solo: AssetId | null;
   indexed: boolean;
+  currency?: "USD" | "EUR" | "GBP";
 }) {
   if (!active || !payload?.length) return null;
   return (
@@ -330,7 +336,7 @@ function ChartTip({
           const text = indexed
             ? v.toFixed(1)
             : solo
-              ? formatPrice(v, ASSET_BY_ID[solo].kind)
+              ? formatPrice(v, ASSET_BY_ID[solo].kind, currency)
               : v.toFixed(2);
           return (
             <p key={key} className="tabular" style={{ color: p.color }}>

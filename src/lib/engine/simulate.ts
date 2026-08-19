@@ -9,9 +9,11 @@ import {
   SEMI,
   TECH,
 } from "./data";
+import { HISTORY_WEEKS, addDays, alignHistory, asOfDay } from "./marks";
 import type {
   AssetId,
   AssetProjection,
+  BookMarks,
   EngineResult,
   HorizonMonths,
   Interaction,
@@ -23,7 +25,6 @@ import type {
 } from "./types";
 
 const WEEK = 7 / 365.25;
-const HISTORY_WEEKS = 78;
 
 const CRYPTO_SET = new Set<AssetId>(CRYPTO);
 const TECH_SET = new Set<AssetId>(TECH);
@@ -45,12 +46,6 @@ function gauss(rng: () => number) {
   const u = Math.max(rng(), 1e-9);
   const v = rng();
   return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-}
-
-function addDays(iso: string, days: number) {
-  const d = new Date(`${iso}T00:00:00Z`);
-  d.setUTCDate(d.getUTCDate() + days);
-  return d.toISOString().slice(0, 10);
 }
 
 function labelFor(iso: string) {
@@ -349,13 +344,13 @@ function interactionDelta(id: string, asset: AssetId, amp: number, current: numb
   }
 }
 
-function historicalPath(assetId: AssetId): number[] {
+function historicalPath(assetId: AssetId, last: number): number[] {
   const asset = ASSET_BY_ID[assetId];
   const rng = mulberry32(hashCode(assetId) ^ 0x51ed);
   const n = HISTORY_WEEKS;
   const values: number[] = new Array(n + 1);
-  values[n] = asset.last;
-  let s = asset.last;
+  values[n] = last;
+  let s = last;
   for (let i = n - 1; i >= 0; i--) {
     const u = i / n;
     let mu = asset.mu;
@@ -377,7 +372,7 @@ function historicalPath(assetId: AssetId): number[] {
     s = s / Math.exp(step);
     values[i] = s;
   }
-  const scale = asset.last / values[n];
+  const scale = last / values[n];
   return values.map((v) => v * scale);
 }
 
@@ -387,13 +382,14 @@ function hashCode(s: string) {
   return h;
 }
 
-const historyCache = new Map<AssetId, number[]>();
+const historyCache = new Map<string, number[]>();
 
-export function getHistory(assetId: AssetId) {
-  let h = historyCache.get(assetId);
+export function getHistory(assetId: AssetId, last = ASSET_BY_ID[assetId].last) {
+  const key = `${assetId}@${last.toPrecision(8)}`;
+  let h = historyCache.get(key);
   if (!h) {
-    h = historicalPath(assetId);
-    historyCache.set(assetId, h);
+    h = historicalPath(assetId, last);
+    historyCache.set(key, h);
   }
   return h;
 }
@@ -404,17 +400,23 @@ function projectAsset(
   horizon: HorizonMonths,
   easedAt: (u: number) => number,
   conflict: number,
+  marks?: BookMarks,
 ): AssetProjection {
   const asset = ASSET_BY_ID[assetId];
-  const hist = getHistory(assetId);
+  const last = marks?.last[assetId] ?? asset.last;
+  const asOf = asOfDay(marks?.asOf) ?? AS_OF;
+  const aligned = marks?.history?.[assetId]
+    ? alignHistory(marks.history[assetId]!, last, asOf, HISTORY_WEEKS)
+    : null;
+  const hist = aligned ?? getHistory(assetId, last);
   const futureWeeks = Math.round((horizon * 52) / 12);
   const T = futureWeeks * WEEK;
   const series: SeriesPoint[] = [];
 
   for (let i = 0; i <= HISTORY_WEEKS; i++) {
     const weeksAgo = HISTORY_WEEKS - i;
-    const iso = addDays(AS_OF, -weeksAgo * 7);
-    const px = hist[i] ?? asset.last;
+    const iso = addDays(asOf, -weeksAgo * 7);
+    const px = hist[i] ?? last;
     series.push({
       t: i,
       iso,
@@ -425,7 +427,6 @@ function projectAsset(
     });
   }
 
-  const last = asset.last;
   for (let k = 1; k <= futureWeeks; k++) {
     const t = k * WEEK;
     const u = k / futureWeeks;
@@ -436,8 +437,8 @@ function projectAsset(
     const z = 1.64;
     series.push({
       t: HISTORY_WEEKS + k,
-      iso: addDays(AS_OF, k * 7),
-      label: labelFor(addDays(AS_OF, k * 7)),
+      iso: addDays(asOf, k * 7),
+      label: labelFor(addDays(asOf, k * 7)),
       baseline,
       scenario,
       ciLow: scenario * Math.exp(-z * vol),
@@ -480,16 +481,16 @@ function detectRegime(
   return eq >= 0 ? "risk-on" : "risk-off";
 }
 
-export function runEngine(input: MixInput): EngineResult {
+export function runEngine(input: MixInput, marks?: BookMarks): EngineResult {
   const ids = activeIds(input.active);
   const { net, conflict, compound, interactions } = combineShocks(input);
   const easedAt = (u: number) => (ids.length ? blendedProfile(ids, input.weights, u) : u);
   const assets = {} as Record<AssetId, AssetProjection>;
   for (const id of ASSET_IDS) {
-    assets[id] = projectAsset(id, net[id], input.horizon, easedAt, conflict);
+    assets[id] = projectAsset(id, net[id], input.horizon, easedAt, conflict, marks);
   }
   return {
-    asOf: AS_OF,
+    asOf: asOfDay(marks?.asOf) ?? AS_OF,
     horizon: input.horizon,
     conflict,
     compound,
@@ -500,6 +501,6 @@ export function runEngine(input: MixInput): EngineResult {
   };
 }
 
-export function impactIso() {
-  return AS_OF;
+export function impactIso(asOf?: string) {
+  return asOfDay(asOf) ?? AS_OF;
 }

@@ -39,9 +39,13 @@ function Login() {
             <p className="text-sm text-muted-foreground">Sign-in is disabled.</p>
           )}
         </div>
-        <p className="mt-6 text-center text-xs">
-          <Link to="/" className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+        <p className="mt-6 text-center text-xs text-muted-foreground">
+          <Link to="/" className="underline-offset-4 hover:text-foreground hover:underline">
             Back to the desk
+          </Link>
+          <span className="mx-2">·</span>
+          <Link to="/legal/disclaimer" className="underline-offset-4 hover:text-foreground hover:underline">
+            Disclaimer
           </Link>
         </p>
       </div>

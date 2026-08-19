@@ -22,7 +22,7 @@ Open the URL Vite prints (default `http://localhost:8080`).
 - Filter events (Bull / Bear / Macro / Geo / Sector) and marks (Equity / ETF / Fund / Crypto).
 - Sign in to save named desks.
 
-Marks as of 18 Aug 2026. Paths are a house shock model — not a forecast, offer, or advice.
+Marks are delayed quotes (Yahoo by default; set `FINNHUB_API_KEY` to prefer Finnhub). Paths are a house shock model — not a forecast, offer, or advice.
 
 ## Build
 

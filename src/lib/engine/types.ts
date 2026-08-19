@@ -205,6 +205,17 @@ export type AssetProjection = {
   series: SeriesPoint[];
 };
 
+export type HistoryBar = {
+  iso: string;
+  close: number;
+};
+
+export type BookMarks = {
+  asOf: string;
+  last: Partial<Record<AssetId, number>>;
+  history?: Partial<Record<AssetId, HistoryBar[]>>;
+};
+
 export type MixInput = {
   active: Partial<Record<ScenarioId, boolean>>;
   weights: Record<ScenarioId, number>;

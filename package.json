@@ -13,7 +13,7 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview --host 0.0.0.0 --port 8080",
     "typecheck": "tsc --noEmit",
-    "test": "node --test 'scripts/**/*.test.mjs'",
+    "test": "node --test scripts/**/*.test.mjs && npx --yes tsx --test src/lib/engine/simulate.marks.test.ts src/lib/market/symbols.test.ts",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
